@@ -4,24 +4,233 @@ using System.Runtime.InteropServices;
 
 namespace ControlAstro.Native
 {
-    public class WinApi
+    internal class WinApi
     {
         #region Structs
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct TT_HITTESTINFO
+        {
+            internal IntPtr hwnd;
+            internal POINT pt;
+            internal TOOLINFO ti;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct TOOLINFO
+        {
+            internal TOOLINFO(int flags)
+            {
+                this.cbSize = Marshal.SizeOf(typeof(TOOLINFO));
+                this.uFlags = flags;
+                this.hwnd = IntPtr.Zero;
+                this.uId = IntPtr.Zero;
+                this.rect = new RECT(0, 0, 0, 0);
+                this.hinst = IntPtr.Zero;
+                this.lpszText = IntPtr.Zero;
+                this.lParam = IntPtr.Zero;
+            }
+
+            public int cbSize;
+            public int uFlags;
+            public IntPtr hwnd;
+            public IntPtr uId;
+            public RECT rect;
+            public IntPtr hinst;
+            public IntPtr lpszText;
+            public IntPtr lParam;
+        }
+
+        //[StructLayout(LayoutKind.Sequential)]
+        //public struct RECT
+        //{
+        //    public int Left;
+        //    public int Top;
+        //    public int Right;
+        //    public int Bottom;
+        //}
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+
+            public RECT(int left, int top, int right, int bottom)
+            {
+                Left = left;
+                Top = top;
+                Right = right;
+                Bottom = bottom;
+            }
+
+            public RECT(Rectangle rect)
+            {
+                Left = rect.Left;
+                Top = rect.Top;
+                Right = rect.Right;
+                Bottom = rect.Bottom;
+            }
+
+            public Rectangle Rect
+            {
+                get
+                {
+                    return new Rectangle(Left, Top, Right - Left, Bottom - Top);
+                }
+            }
+
+            public Size Size
+            {
+                get
+                {
+                    return new Size(Right - Left, Bottom - Top);
+                }
+            }
+
+            public static RECT FromXYWH(int x, int y, int width, int height)
+            {
+                return new RECT(x, y, x + width, y + height);
+            }
+
+            public static RECT FromRectangle(Rectangle rect)
+            {
+                return new RECT(rect.Left, rect.Top, rect.Right, rect.Bottom);
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct PAINTSTRUCT
+        {
+            public IntPtr hdc;
+            public int fErase;
+            public RECT rcPaint;
+            public int fRestore;
+            public int fIncUpdate;
+            public int Reserved1;
+            public int Reserved2;
+            public int Reserved3;
+            public int Reserved4;
+            public int Reserved5;
+            public int Reserved6;
+            public int Reserved7;
+            public int Reserved8;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NMTTDISPINFO
+        {
+            internal NMTTDISPINFO(int flags)
+            {
+                this.hdr = new NMHDR(0);
+                this.lpszText = IntPtr.Zero;
+                this.szText = IntPtr.Zero;
+                this.hinst = IntPtr.Zero;
+                this.uFlags = 0;
+                this.lParam = IntPtr.Zero;
+            }
+
+            internal NMHDR hdr;
+            internal IntPtr lpszText;
+            internal IntPtr szText;
+            internal IntPtr hinst;
+            internal int uFlags;
+            internal IntPtr lParam;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NMTTCUSTOMDRAW
+        {
+            internal NMCUSTOMDRAW nmcd;
+            internal uint uDrawFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NMHDR
+        {
+            internal NMHDR(int flag)
+            {
+                hwndFrom = IntPtr.Zero;
+                idFrom = 0;
+                code = 0;
+            }
+
+            internal IntPtr hwndFrom;
+            internal int idFrom;
+            internal int code;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NMCUSTOMDRAW
+        {
+            internal NMHDR hdr;
+            internal uint dwDrawStage;
+            internal IntPtr hdc;
+            internal RECT rc;
+            internal IntPtr dwItemSpec;
+            internal uint uItemState;
+            internal IntPtr lItemlParam;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct INITCOMMONCONTROLSEX
+        {
+            internal INITCOMMONCONTROLSEX(int flags)
+            {
+                dwSize = Marshal.SizeOf(typeof(INITCOMMONCONTROLSEX));
+                dwICC = flags;
+            }
+
+            internal int dwSize;
+            internal int dwICC;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct BLENDFUNCTION
+        {
+            internal byte BlendOp;
+            internal byte BlendFlags;
+            internal byte SourceConstantAlpha;
+            internal byte AlphaFormat;
+
+            internal BLENDFUNCTION(byte op, byte flags, byte alpha, byte format)
+            {
+                BlendOp = op;
+                BlendFlags = flags;
+                SourceConstantAlpha = alpha;
+                AlphaFormat = format;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct TRACKMOUSEEVENT
+        {
+            internal uint cbSize;
+            internal TRACKMOUSEEVENT_FLAGS dwFlags;
+            internal IntPtr hwndTrack;
+            internal uint dwHoverTime;
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct TCHITTESTINFO
         {
             public Point pt;
             public uint flags;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -59,6 +268,14 @@ namespace ControlAstro.Native
         #endregion
 
         #region Enums
+
+        public enum TRACKMOUSEEVENT_FLAGS : uint
+        {
+            TME_HOVER = 1,
+            TME_LEAVE = 2,
+            TME_QUERY = 0x40000000,
+            TME_CANCEL = 0x80000000
+        }
 
         public enum ABM : uint
         {
@@ -357,12 +574,141 @@ namespace ControlAstro.Native
 
         public const int TCM_HITTEST = 0x1313;
 
-        public const int CS_DROPSHADOW = 0x20000;
+        public const int CS_DROPSHADOW = 0x00020000;
         public const int GCL_STYLE = (-26);
 
         #endregion
 
         #region API Calls
+
+        #region USER32.DLL
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
+
+        [DllImport("user32.dll")]
+        public static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
+        public static extern IntPtr CreateWindowEx(
+            int exstyle,
+            string lpClassName,
+            string lpWindowName,
+            int dwStyle,
+            int x,
+            int y,
+            int nWidth,
+            int nHeight,
+            IntPtr hwndParent,
+            IntPtr Menu,
+            IntPtr hInstance,
+            IntPtr lpParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr LoadIcon(
+            IntPtr hInstance, int lpIconName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyIcon(IntPtr hIcon);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetWindowPos(
+            IntPtr hWnd,
+            IntPtr hWndAfter,
+            int x,
+            int y,
+            int cx,
+            int cy,
+            uint flags);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetClientRect(
+            IntPtr hWnd, ref RECT r);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowRect(
+            IntPtr hWnd, ref RECT lpRect);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(
+            IntPtr hwnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(
+            IntPtr hwnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetCursorPos(ref Point lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr handle);
+
+        [DllImport("user32.dll")]
+        public static extern int ReleaseDC(IntPtr hwnd, IntPtr hDc);
+
+        [DllImport("user32.dll", SetLastError = false)]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        public static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT lpEventTrack);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PtInRect(ref RECT lprc, Point pt);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        public static extern IntPtr SetTimer(
+            IntPtr hWnd,
+            int nIDEvent,
+            uint uElapse,
+            IntPtr lpTimerFunc);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool KillTimer(IntPtr hWnd, uint uIDEvent);
+
+        [DllImport("user32.dll")]
+        public static extern int SetFocus(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr wnd, int msg, bool param, int lparam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, int wParam, ref TOOLINFO lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, int wParam, ref RECT lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(
+            IntPtr hWnd,
+            int msg,
+            IntPtr wParam,
+            [MarshalAs(UnmanagedType.LPTStr)]string lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref NMHDR lParam);
+
+        [DllImport("user32.dll")]
+        public extern static int SendMessage(IntPtr hWnd, int msg, IntPtr wParam, int lParam);
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
@@ -381,12 +727,6 @@ namespace ControlAstro.Native
         [DllImport("user32.dll")]
         public static extern IntPtr SetCapture(IntPtr hWnd);
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr wnd, int msg, bool param, int lparam);
-
         [DllImport("shell32.dll", SetLastError = true)]
         public static extern IntPtr SHAppBarMessage(ABM dwMessage, [In] ref APPBARDATA pData);
 
@@ -403,9 +743,6 @@ namespace ControlAstro.Native
         public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern int ReleaseDC(IntPtr hwnd, IntPtr hDc);
-
-        [DllImport("user32.dll")]
         public static extern bool ShowScrollBar(IntPtr hWnd, int bar, int cmd);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -413,6 +750,137 @@ namespace ControlAstro.Native
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetClassLong(IntPtr hwnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowRgn(IntPtr hwnd, int hRgn, bool bRedraw);
+
+        #endregion
+
+        #region GDI32.DLL
+
+        [DllImport("gdi32.dll", EntryPoint = "GdiAlphaBlend")]
+        public static extern bool AlphaBlend(
+            IntPtr hdcDest,
+            int nXOriginDest,
+            int nYOriginDest,
+            int nWidthDest,
+            int nHeightDest,
+            IntPtr hdcSrc,
+            int nXOriginSrc,
+            int nYOriginSrc,
+            int nWidthSrc,
+            int nHeightSrc,
+            BLENDFUNCTION blendFunction);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool StretchBlt(
+            IntPtr hDest,
+            int X,
+            int Y,
+            int nWidth,
+            int nHeight,
+            IntPtr hdcSrc,
+            int sX,
+            int sY,
+            int nWidthSrc,
+            int nHeightSrc,
+            int dwRop);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool BitBlt(
+            IntPtr hdc,
+            int nXDest,
+            int nYDest,
+            int nWidth,
+            int nHeight,
+            IntPtr hdcSrc,
+            int nXSrc,
+            int nYSrc,
+            int dwRop);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDCA(
+            [MarshalAs(UnmanagedType.LPStr)]string lpszDriver,
+            [MarshalAs(UnmanagedType.LPStr)]string lpszDevice,
+            [MarshalAs(UnmanagedType.LPStr)]string lpszOutput,
+            int lpInitData);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDCW(
+            [MarshalAs(UnmanagedType.LPWStr)]string lpszDriver,
+            [MarshalAs(UnmanagedType.LPWStr)]string lpszDevice,
+            [MarshalAs(UnmanagedType.LPWStr)]string lpszOutput,
+            int lpInitData);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDC(
+            string lpszDriver,
+            string lpszDevice,
+            string lpszOutput,
+            int lpInitData);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleBitmap(
+            IntPtr hdc, int nWidth, int nHeight);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll", ExactSpelling = true, PreserveSig = true)]
+        public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("gdi32.dll")]
+        public static extern int CreateRoundRectRgn(int x1, int y1, int x2, int y2, int x3, int y3);
+
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject", CharSet = CharSet.Ansi)]
+        public static extern int DeleteObject(int hObject);
+
+        #endregion
+
+        #region comctl32.dll
+
+        [DllImport("comctl32.dll",
+            CallingConvention = CallingConvention.StdCall)]
+        public static extern bool InitCommonControlsEx(
+            ref INITCOMMONCONTROLSEX iccex);
+
+        #endregion
+
+        #region kernel32.dll
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            ref NMHDR destination, IntPtr source, int length);
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            ref NMTTDISPINFO destination, IntPtr source, int length);
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            IntPtr destination, ref NMTTDISPINFO Source, int length);
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            ref POINT destination, ref RECT Source, int length);
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            ref NMTTCUSTOMDRAW destination, IntPtr Source, int length);
+
+        [DllImport("kernel32.dll")]
+        public extern static int RtlMoveMemory(
+            ref NMCUSTOMDRAW destination, IntPtr Source, int length);
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
@@ -423,14 +891,7 @@ namespace ControlAstro.Native
         [DllImport("kernel32.dll")]
         public static extern IntPtr SetEvent(IntPtr lpEvent);
 
-        [DllImport("gdi32.dll")]
-        public static extern int CreateRoundRectRgn(int x1, int y1, int x2, int y2, int x3, int y3);
-
-        [DllImport("user32.dll")]
-        public static extern int SetWindowRgn(IntPtr hwnd, int hRgn, Boolean bRedraw);
-
-        [DllImport("gdi32.dll", EntryPoint = "DeleteObject", CharSet = CharSet.Ansi)]
-        public static extern int DeleteObject(int hObject);
+        #endregion
 
         #endregion
 
