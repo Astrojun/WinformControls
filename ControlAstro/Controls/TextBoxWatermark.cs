@@ -14,8 +14,6 @@ namespace ControlAstro.Controls
     {
 
         private string hintText = string.Empty;
-        private Font hintFont = SystemFonts.DefaultFont;
-
         [Description("水印文本")]
         public string HintText
         {
@@ -27,6 +25,7 @@ namespace ControlAstro.Controls
             }
         }
 
+        private Font hintFont = SystemFonts.DefaultFont;
         [Description("用于显示水印文本的字体")]
         public Font HintFont
         {
@@ -38,24 +37,30 @@ namespace ControlAstro.Controls
             }
         }
 
+        [Description("是否只能输入数字")]
+        public bool NumberOnly { get; set; }
+
+        [Description("是否只能输入字母")]
+        public bool LetterOnly { get; set; }
+
+
         public TextBoxWatermark()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
             ToolStripMenuItem ToolStripMenuItemPaste = new ToolStripMenuItem();
             ToolStripMenuItemPaste.Name = "ToolStripMenuItemPaste";
-            ToolStripMenuItemPaste.Size = new System.Drawing.Size(152, 22);
+            ToolStripMenuItemPaste.Size = new Size(152, 22);
             ToolStripMenuItemPaste.Text = "粘贴";
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            ToolStripMenuItemPaste});
+            contextMenuStrip.Items.AddRange(new ToolStripItem[] { ToolStripMenuItemPaste });
             contextMenuStrip.Name = "contextMenuStrip";
-            contextMenuStrip.Size = new System.Drawing.Size(153, 48);
+            contextMenuStrip.Size = new Size(153, 48);
             ToolStripMenuItemPaste.Enabled = Clipboard.ContainsText();
             contextMenuStrip.Renderer = new ToolStripRendererEx();
             contextMenuStrip.ItemClicked += new ToolStripItemClickedEventHandler(contextMenuStrip_ItemClicked);
 
-            this.ContextMenuStrip = contextMenuStrip;
+            ContextMenuStrip = contextMenuStrip;
         }
 
         private void contextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -68,6 +73,34 @@ namespace ControlAstro.Controls
                 default:
                     break;
             }
+        }
+
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            if (NumberOnly)
+            {
+                if ((keyData >= Keys.NumPad0 && keyData <= Keys.NumPad9) ||
+                (keyData >= Keys.D0 && keyData <= Keys.D9))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            if (LetterOnly)
+            {
+                if (keyData >= Keys.A && keyData <= Keys.Z)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return base.ProcessDialogKey(keyData);
         }
 
         protected override void WndProc(ref Message m)
@@ -89,7 +122,10 @@ namespace ControlAstro.Controls
             }
         }
 
-        //水印
+        /// <summary>
+        /// 水印
+        /// </summary>
+        /// <param name="hDC"></param>
         private void WmPaint(IntPtr hDC)
         {
             using (Graphics graphics = Graphics.FromHdc(hDC))
@@ -101,7 +137,7 @@ namespace ControlAstro.Controls
                     {
                         format |= TextFormatFlags.RightToLeft | TextFormatFlags.Right;
                     }
-                    TextRenderer.DrawText(graphics, this.hintText, this.hintFont, new Rectangle(-2, -2, ClientSize.Width, ClientSize.Height), Color.Gray, format);
+                    TextRenderer.DrawText(graphics, this.hintText, this.hintFont, ClientRectangle, Color.Gray, format);
                 }
             }
         }
