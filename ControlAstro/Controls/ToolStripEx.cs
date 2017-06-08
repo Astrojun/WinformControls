@@ -99,7 +99,7 @@ namespace ControlAstro.Controls
             {
                 if (item.Pressed)  //item被按下
                 {
-                    using (SolidBrush brush = new SolidBrush(e.Item.BackColor))
+                    using (SolidBrush brush = new SolidBrush(item.BackColor))
                     {
                         g.FillRectangle(brush, clientRectangle);
                         using (Pen pen = new Pen(Color.Silver))
@@ -109,7 +109,6 @@ namespace ControlAstro.Controls
                                 new Point(clientRectangle.X, clientRectangle.Y),
                                 new Point(clientRectangle.Right - 1, clientRectangle.Y),
                                 new Point(clientRectangle.Right - 1, clientRectangle.Bottom) });
-                            //g.DrawRectangle(pen, clientRectangle.X, clientRectangle.Y, clientRectangle.Width - 1, clientRectangle.Height - 1);
                         }
                     }
                 }
@@ -129,9 +128,10 @@ namespace ControlAstro.Controls
             {
                 if (item.Selected)
                 {
-                    using (SolidBrush pen = new SolidBrush(Color.Silver))
+                    using (SolidBrush brush = new SolidBrush(Color.FromArgb(120, Color.Silver)))
                     {
-                        g.FillRectangle(pen, clientRectangle);
+                        brush.Color = item.BackColor == SystemColors.Control ? Color.FromArgb(120, Color.Silver) : item.BackColor;
+                        g.FillRectangle(brush, clientRectangle);
                     }
                 }
                 else
