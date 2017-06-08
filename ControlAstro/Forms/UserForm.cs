@@ -1,4 +1,5 @@
-﻿using ControlAstro.Drawing;
+﻿using ControlAstro.Controls;
+using ControlAstro.Drawing;
 using ControlAstro.Enums.ControlEnums;
 using ControlAstro.Native;
 using System;
@@ -16,15 +17,41 @@ namespace ControlAstro.Forms
 
         private bool isInitialized = false;
         private int borderWidth = 1;
-        private Dictionary<WindowButtons, Button> windowButtonList;
+        private Dictionary<WindowButtons, Label> windowButtonList;
+        private float fx = 1;
+        private float fy = 1;
+        private float fw = 1;
+        private float fh = 1;
 
+        [Description("背景色旋转角度"), Browsable(false)]
+        public float BackAngle { get; set; }
+
+        private LinearGradientBrush backBrush;
+        [Description("渐变背景色"), Browsable(false)]
+        public LinearGradientBrush BackBrush
+        {
+            get { return backBrush; }
+            set
+            {
+                RectangleF rect = value.Rectangle;
+                fx = rect.X / ClientRectangle.Width;
+                fy = rect.Y / ClientRectangle.Height;
+                fw = rect.Width / ClientRectangle.Width;
+                fh = rect.Height / ClientRectangle.Height;
+                backBrush = value;
+            }
+        }
 
         private bool isResizable = true;
         [Description("窗口大小是否可变")]
         public bool Resizable
         {
             get { return isResizable; }
-            set { isResizable = value; }
+            set
+            {
+                isResizable = value;
+                if (!value) { MaximizeBox = value; }
+            }
         }
 
         private bool isMovable = true;
@@ -73,7 +100,76 @@ namespace ControlAstro.Forms
             }
         }
 
-        [Description("非客户区大小"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        private Color controlBoxBackColor = Color.Transparent;
+        [Description("窗体菜单框背景色")]
+        public Color ControlBoxBackColor
+        {
+            get { return controlBoxBackColor; }
+            set
+            {
+                controlBoxBackColor = value;
+                Invalidate();
+            }
+        }
+
+        private Color controlBoxForeColor = SystemColors.ControlText;
+        [Description("窗体菜单框前景色")]
+        public Color ControlBoxForeColor
+        {
+            get { return controlBoxForeColor; }
+            set
+            {
+                controlBoxForeColor = value;
+                Invalidate();
+            }
+        }
+
+        public bool showHeaderBackground = false;
+        [Description("是否显示标题头背景")]
+        public bool ShowHeaderBackground
+        {
+            get { return showHeaderBackground; }
+            set
+            {
+                showHeaderBackground = value;
+                if(value)
+                {
+                    Padding = new Padding(1, 26, 1, 1);
+                }
+                else
+                {
+                    Padding = new Padding(1);
+                }
+                Invalidate();
+            }
+        }
+
+        private Color headerBackground = SystemColors.Control;
+        [Description("窗体菜单框前景色")]
+        public Color HeaderBackground
+        {
+            get { return headerBackground; }
+            set
+            {
+                headerBackground = value;
+                Invalidate();
+            }
+        }
+
+        private Color headerForeColor = SystemColors.ControlText;
+        [Description("窗体菜单框前景色")]
+        public Color HeaderForeColor
+        {
+            get { return headerForeColor; }
+            set
+            {
+                headerForeColor = value;
+                Invalidate();
+            }
+        }
+
+
+        [Description("非客户区大小"), Browsable(false), EditorBrowsable(EditorBrowsableState.Advanced)]
         public new Padding Padding { get { return base.Padding; } set { base.Padding = value; } }
 
         [Browsable(false), DefaultValue(FormBorderStyle.None)]
@@ -117,7 +213,7 @@ namespace ControlAstro.Forms
                          ControlStyles.UserPaint, true);
             MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
             //Padding = new Padding(5, 40, 5, 5);
-            Padding = new Padding(0);
+            Padding = new Padding(1);
             RemoveCloseButton();
         }
 
@@ -149,11 +245,26 @@ namespace ControlAstro.Forms
         {
             base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.Clear(BackColor);
 
+            if (BackgroundImage == null)
+            {
+                //渐变背景
+                if (BackBrush != null && BackBrush != SystemBrushes.Control)
+                {
+                    RectangleF rect = new RectangleF(ClientRectangle.Width * fx, ClientRectangle.Height * fy, ClientRectangle.Width * fw, ClientRectangle.Height * fh);
+                    e.Graphics.FillRectangle(new LinearGradientBrush(rect, BackBrush.LinearColors[0], BackBrush.LinearColors[1], BackAngle), ClientRectangle);
+                }
+            }
+
+            if(ShowHeaderBackground)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(HeaderBackground), new Rectangle(0, 0, Width, 26));
+            }
+
+            //标题头
             if (ShowHeader)
             {
-                Point titlePoint = new Point(10, 7);
+                Point titlePoint = new Point(10, 3);
                 titlePoint.X = ShowIcon ? 35 : 5;
                 if (ShowIcon)
                 {
@@ -165,7 +276,7 @@ namespace ControlAstro.Forms
                         e.Graphics.DrawImage(image, rec, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imgAtt);
                     }
                 }
-                TextRenderer.DrawText(e.Graphics, Text, MetroFonts.Subtitle, titlePoint, ForeColor);
+                TextRenderer.DrawText(e.Graphics, Text, MetroFonts.Subtitle, titlePoint, HeaderForeColor);
             }
 
             //ControlPaint.DrawSizeGrip(e.Graphics, Color.Black, ClientRectangle.Width - 20, ClientRectangle.Height - 20, 19, 19);
@@ -185,32 +296,31 @@ namespace ControlAstro.Forms
                 }
             }
 
-
-            if (ControlBox && DesignMode)
+            //功能按钮
+            if (DesignMode && ControlBox)
             {
-
                 if (MinimizeBox)
                 {
                     if (MaximizeBox)
                     {
                         TextRenderer.DrawText(e.Graphics, "0", new Font("Webdings", 9.25f), new Rectangle(ClientRectangle.Width - 91, 1, 30, 25),
-                    Color.Black, BackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                            ControlBoxForeColor, ControlBoxBackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
                     }
                     else
                     {
                         TextRenderer.DrawText(e.Graphics, "0", new Font("Webdings", 9.25f), new Rectangle(ClientRectangle.Width - 61, 1, 30, 25),
-                    Color.Black, BackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                            ControlBoxForeColor, ControlBoxBackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
                     }
                 }
                 if (MaximizeBox)
                 {
                     TextRenderer.DrawText(e.Graphics, "1", new Font("Webdings", 9.25f), new Rectangle(ClientRectangle.Width - 61, 1, 30, 25),
-                    Color.Black, BackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                        ControlBoxForeColor, ControlBoxBackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
                 }
                 TextRenderer.DrawText(e.Graphics, "r", new Font("Webdings", 9.25f), new Rectangle(ClientRectangle.Width - 31, 1, 30, 25),
-                    Color.Black, BackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                    ControlBoxForeColor, ControlBoxBackColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             }
-
+            //边框
             ButtonBorderStyle leftBorder = ShowBorder.HasFlag(BorderState.Left) ? ButtonBorderStyle.Solid : ButtonBorderStyle.None;
             ButtonBorderStyle topBorder = ShowBorder.HasFlag(BorderState.Top) ? ButtonBorderStyle.Solid : ButtonBorderStyle.None;
             ButtonBorderStyle rightBorder = ShowBorder.HasFlag(BorderState.Right) ? ButtonBorderStyle.Solid : ButtonBorderStyle.None;
@@ -278,9 +388,16 @@ namespace ControlAstro.Forms
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-            if (MaximizeBox && e.Button == MouseButtons.Left && e.Clicks == 2)
+            if(e.Button == MouseButtons.Left && e.Clicks == 2)
             {
-                ControlBox_Click(Controls["btnMax"], EventArgs.Empty);
+                if (MaximizeBox)
+                {
+                    ControlBox_Click(windowButtonList[WindowButtons.Maximize], EventArgs.Empty);
+                }
+                else if (Resizable)
+                {
+                    WindowState = WindowState == FormWindowState.Normal ? WindowState = FormWindowState.Maximized : WindowState = FormWindowState.Normal;
+                }
             }
         }
 
@@ -348,13 +465,14 @@ namespace ControlAstro.Forms
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            
+
             if (e.Button == MouseButtons.Left && e.Clicks == 1 && Movable)
             {
-                if (WindowState == FormWindowState.Maximized) Controls["btnMax"].Text = "1";
                 if (Width - borderWidth > e.Location.X && e.Location.X > borderWidth && e.Location.Y > borderWidth)
                 {
                     MoveControl();
+                    if (MaximizeBox && WindowState == FormWindowState.Normal)
+                        windowButtonList[WindowButtons.Maximize].Text = "1";
                 }
             }
         }
@@ -368,12 +486,12 @@ namespace ControlAstro.Forms
         private void AddControlBox(WindowButtons button)
         {
             if (windowButtonList == null)
-                windowButtonList = new Dictionary<WindowButtons, Button>();
+                windowButtonList = new Dictionary<WindowButtons, Label>();
 
             if (windowButtonList.ContainsKey(button))
                 return;
 
-            Button newButton = new Button();
+            LabelButton newButton = new LabelButton();
 
             if (button == WindowButtons.Close)
             {
@@ -397,11 +515,14 @@ namespace ControlAstro.Forms
             }
 
             newButton.Tag = button;
+            newButton.AutoSize = false;
             newButton.Size = new Size(30, 25);
             newButton.Font = new Font("Webdings", 9.25f);
             newButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            newButton.FlatStyle = FlatStyle.Flat;
-            newButton.FlatAppearance.BorderSize = 0;
+            newButton.TextAlign = ContentAlignment.MiddleCenter;
+            newButton.BackColor = ControlBoxBackColor;
+            newButton.ForeColor = ControlBoxForeColor;
+            newButton.TabStop = false;
             newButton.Click += new EventHandler(ControlBox_Click);
             Controls.Add(newButton);
 
@@ -410,7 +531,7 @@ namespace ControlAstro.Forms
 
         private void ControlBox_Click(object sender, EventArgs e)
         {
-            var btn = sender as Button;
+            var btn = sender as Label;
             if (btn != null)
             {
                 var btnFlag = (WindowButtons)btn.Tag;
@@ -436,6 +557,7 @@ namespace ControlAstro.Forms
                     }
                 }
             }
+            Focus();
         }
 
         private void UpdateWindowButtonPosition()
@@ -447,11 +569,11 @@ namespace ControlAstro.Forms
             Point firstButtonLocation = new Point(ClientRectangle.Width - 31, borderWidth);
             int lastDrawedButtonPosition = firstButtonLocation.X - 30;
 
-            Button firstButton = null;
+            Control firstButton = null;
 
             if (windowButtonList.Count == 1)
             {
-                foreach (KeyValuePair<WindowButtons, Button> button in windowButtonList)
+                foreach (KeyValuePair<WindowButtons, Label> button in windowButtonList)
                 {
                     button.Value.Location = firstButtonLocation;
                 }
@@ -492,5 +614,7 @@ namespace ControlAstro.Forms
             WinApi.DrawMenuBar(Handle);
         }
 
+
     }
+
 }
