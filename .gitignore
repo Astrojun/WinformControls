@@ -1,3 +1,9 @@
 
 .vs/ControlAstro/v14/.suo
 ControlAstro/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+ControlAstro/Communication/Sock_Wrapper.cs
+ControlAstro/Controls/DataGridViewStateColumn.cs
+ControlAstro/Controls/DataGridViewStateColumn.cs
+ControlAstro/Forms/BaseForm.cs
+ControlAstro/Forms/BaseForm.Designer.cs
+ControlAstro/Forms/BaseForm.resx
