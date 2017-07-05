@@ -28,26 +28,20 @@ namespace ControlAstro.Controls
 
         public TabControlEx()
         {
-            setStyles();
-
-            ia = new ImageAttributes();
-            cm = new ColorMatrix(colorMatrix);
-            ia.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);  //未选中时图片的灰度化
-
-            icon = new Bitmap(1, 1);
-            //tabBackground = Properties.Resources.TabButtonBackground;
-        }
-
-        private void setStyles()
-        {
-            base.SetStyle(
+            SetStyle(
                  ControlStyles.UserPaint |
                  ControlStyles.OptimizedDoubleBuffer |
                  ControlStyles.AllPaintingInWmPaint |
                  ControlStyles.ResizeRedraw |
                  ControlStyles.SupportsTransparentBackColor,
                  true);
-            base.UpdateStyles();
+            UpdateStyles();
+
+            ia = new ImageAttributes();
+            cm = new ColorMatrix(colorMatrix);
+            ia.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);  //未选中时图片的灰度化
+
+            icon = new Bitmap(1, 1);
         }
 
         [Browsable(false)]
@@ -90,6 +84,15 @@ namespace ControlAstro.Controls
             }
         }
 
+        public override Rectangle DisplayRectangle
+        {
+            get
+            {
+                Rectangle rect = base.DisplayRectangle;
+                return new Rectangle(rect.Left - 4, rect.Top - 4, rect.Width + 8, rect.Height + 8);
+            }
+        }
+
         // 计算控件底线
         private void setLowBound(Control container)
         {
@@ -112,11 +115,8 @@ namespace ControlAstro.Controls
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            g.FillRectangle(new SolidBrush(this.BackColor), e.ClipRectangle);
-            
+            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            e.Graphics.FillRectangle(new SolidBrush(this.BackColor), e.ClipRectangle);
             for (int i = 0; i < this.TabCount; i++)
             {
                 bool flag1 = (Alignment == TabAlignment.Top || Alignment == TabAlignment.Bottom) ? true : false;
@@ -142,27 +142,13 @@ namespace ControlAstro.Controls
 
                     if (!flag2)
                     {
-                        g.DrawImage(
-                            icon,
-                            new Rectangle(
-                                this.GetTabRect(i).X + (this.GetTabRect(i).Width - icon.Width) / 2,
-                                this.GetTabRect(i).Y + 4,
-                                icon.Width,
-                                icon.Height),
-                            0,
-                            0,
-                            icon.Width,
-                            icon.Height,
-                            GraphicsUnit.Pixel,
-                            ia);
+                        e.Graphics.DrawImage(icon,
+                            new Rectangle(this.GetTabRect(i).X + (this.GetTabRect(i).Width - icon.Width) / 2, this.GetTabRect(i).Y + 4, icon.Width, icon.Height),
+                            0, 0, icon.Width, icon.Height, GraphicsUnit.Pixel, ia);
                     }
                     else
                     {
-                        //g.DrawImage(tabBackground, rectangle.X - 2, rectangle.Y - 2, rectangle.Width, rectangle.Height);
-                        g.DrawImage(
-                            icon,
-                            this.GetTabRect(i).X + (this.GetTabRect(i).Width - icon.Width) / 2 - 2,
-                            this.GetTabRect(i).Y + 4 - 2);
+                        e.Graphics.DrawImage(icon, this.GetTabRect(i).X + (this.GetTabRect(i).Width - icon.Width) / 2 - 2, this.GetTabRect(i).Y + 4 - 2);
                     }
                 }
                 else
@@ -171,36 +157,26 @@ namespace ControlAstro.Controls
                     {
                         if (flag1)
                         {
-                            g.FillRectangle(Brushes.Lime, Convert.ToInt32((rectangle.Width - textSize.Width) / 2) + rectangle.X, rectangle.Height - 2,
-                                textSize.Width - 5, 2);
+                            e.Graphics.FillRectangle(Brushes.Lime, Convert.ToInt32((rectangle.Width - textSize.Width) / 2) + rectangle.X, rectangle.Bottom - 2,
+                                textSize.Width - 4, 2);
                         }
                         else
                         {
-                            g.FillRectangle(Brushes.Lime, rectangle.Width - 2, Convert.ToInt32((rectangle.Height - textSize.Height) / 2) + rectangle.Y,
-                                2, textSize.Height);
+                            e.Graphics.FillRectangle(Brushes.Lime, rectangle.Right - 2, Convert.ToInt32((rectangle.Height - textSize.Height) / 2) + rectangle.Y,
+                                2, textSize.Height + 4);
                         }
                     }
                 }
                 
                 if (!this.TabPages[i].Text.Equals(string.Empty))
                 {
-                    TextRenderer.DrawText(g, this.TabPages[i].Text, this.Font, rectangle, SystemColors.ControlLightLight, format);
+                    TextRenderer.DrawText(e.Graphics, this.TabPages[i].Text, this.Font, rectangle, SystemColors.ControlLightLight, format);
                     rectangle.Offset(-1, 0);
-                    TextRenderer.DrawText(g, this.TabPages[i].Text, this.Font, rectangle, SystemColors.ControlText, format);
+                    TextRenderer.DrawText(e.Graphics, this.TabPages[i].Text, this.Font, rectangle, SystemColors.ControlText, format);
                 }
-
-                
             }
         }
 
-        public override Rectangle DisplayRectangle
-        {
-            get
-            {
-                Rectangle rect = base.DisplayRectangle;
-                return new Rectangle(rect.Left - 4, rect.Top - 4, rect.Width + 8, rect.Height + 8);
-            }
-        }
 
     }
 }
