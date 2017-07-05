@@ -15,16 +15,6 @@ namespace ControlAstro.Forms
     [DebuggerStepThrough]
     public sealed class MsgBox : Form
     {
-        private string BtnAbort = "终止";
-        private string BtnCancel = "取消";
-        private string BtnIgnore = "忽略";
-        private string BtnNo = "否";
-        private string BtnOK = "确定";
-        private string BtnRetry = "重试";
-        private string BtnYes = "是";
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern bool MessageBeep(uint type);
 
         #region Properties
 
@@ -56,6 +46,16 @@ namespace ControlAstro.Forms
         private Color BorderColor { get; set; }
         private ColorTem ColorTemelat { get; set; }
 
+        private string BtnAbort = "终止";
+        private string BtnCancel = "取消";
+        private string BtnIgnore = "忽略";
+        private string BtnNo = "否";
+        private string BtnOK = "确定";
+        private string BtnRetry = "重试";
+        private string BtnYes = "是";
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool MessageBeep(uint type);
 
         #endregion
 
@@ -731,13 +731,13 @@ namespace ControlAstro.Forms
 
         public class ColorTem
         {
-            private static Color _defaultBackColor = Color.White;
-            private static Color _defaultForeColor = Color.Black;
-            private static Color _defaultFootBackColor = Color.Silver;
-            private static Color _defaultButtonBackColor = Color.Transparent;
-            private static Color _defaultButtonForeColor = Color.Black;
-            private static Color _defaultButtonBorderColor = Color.FromArgb(0, 151, 251);
-            private static Color _defaultBorderColor = Color.FromArgb(0, 151, 251);
+            private Color _defaultBackColor = Color.White;
+            private Color _defaultForeColor = Color.Black;
+            private Color _defaultFootBackColor = Color.Silver;
+            private Color _defaultButtonBackColor = Color.Transparent;
+            private Color _defaultButtonForeColor = Color.Black;
+            private Color _defaultButtonBorderColor = Color.FromArgb(0, 151, 251);
+            private Color _defaultBorderColor = Color.FromArgb(0, 151, 251);
 
 
             private Color backColor = Color.Empty;
