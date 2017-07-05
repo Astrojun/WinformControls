@@ -77,6 +77,10 @@ namespace ControlAstro.Controls
 
         protected override bool ProcessDialogKey(Keys keyData)
         {
+            if (keyData == Keys.Tab || keyData == Keys.Enter)
+            {
+                return base.ProcessDialogKey(keyData);
+            }
             if (NumberOnly)
             {
                 if ((keyData >= Keys.NumPad0 && keyData <= Keys.NumPad9) ||
