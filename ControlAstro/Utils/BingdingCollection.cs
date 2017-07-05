@@ -4,6 +4,7 @@ using System.ComponentModel;
 
 namespace ControlAstro.Utils
 {
+    [Serializable]
     public class BindingCollection<T> : BindingList<T>
     {
         private bool isSorted;
