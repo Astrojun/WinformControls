@@ -168,11 +168,14 @@ namespace ControlAstro.Forms
             }
         }
 
+        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        //public Structs.FormColor FormColor { get; set; }
+
 
         [Description("非客户区大小"), Browsable(false), EditorBrowsable(EditorBrowsableState.Advanced)]
         public new Padding Padding { get { return base.Padding; } set { base.Padding = value; } }
 
-        [Browsable(false), DefaultValue(FormBorderStyle.None)]
+        [Browsable(false), DefaultValue(FormBorderStyle.None), EditorBrowsable(EditorBrowsableState.Never)]
         public new FormBorderStyle FormBorderStyle
         {
             get
@@ -213,14 +216,8 @@ namespace ControlAstro.Forms
                          ControlStyles.UserPaint, true);
             MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
             //Padding = new Padding(5, 40, 5, 5);
-            Padding = new Padding(1);
-            RemoveCloseButton();
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            //WinApi.SetClassLong(Handle, WinApi.GCL_STYLE, WinApi.GetClassLong(Handle, WinApi.GCL_STYLE) | WinApi.CS_DROPSHADOW);
+            Padding = new Padding(borderWidth);
+            //RemoveCloseButton();
         }
 
         private static void SetFormRoundRectRgn(Form form, int rgnRadius)
@@ -334,57 +331,6 @@ namespace ControlAstro.Forms
             e.Graphics.DrawArc(new Pen(BorderColor), 0, ClientRectangle.Height - 3, 3, 3, 90, 90);
         }
 
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-
-            if (!isInitialized)
-            {
-                if (ControlBox)
-                {
-                    AddControlBox(WindowButtons.Close);
-
-                    if (MaximizeBox)
-                        AddControlBox(WindowButtons.Maximize);
-
-                    if (MinimizeBox)
-                        AddControlBox(WindowButtons.Minimize);
-
-                    UpdateWindowButtonPosition();
-                }
-
-                if (StartPosition == FormStartPosition.CenterScreen)
-                {
-                    Point initialLocation = new Point();
-                    initialLocation.X = (Screen.PrimaryScreen.WorkingArea.Width - (ClientRectangle.Width + 5)) / 2;
-                    initialLocation.Y = (Screen.PrimaryScreen.WorkingArea.Height - (ClientRectangle.Height + 5)) / 2;
-                    Location = initialLocation;
-                    base.OnActivated(e);
-                }
-
-                isInitialized = true;
-            }
-
-            //if (DesignMode) return;
-
-            Refresh();
-        }
-
-        protected override void OnDeactivate(EventArgs e)
-        {
-            base.OnDeactivate(e);
-            if (isInitialized)
-            {
-                Refresh();
-            }
-        }
-
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            base.OnEnabledChanged(e);
-            Invalidate();
-        }
-
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
@@ -401,15 +347,27 @@ namespace ControlAstro.Forms
             }
         }
 
-        protected override void OnResizeEnd(EventArgs e)
-        {
-            base.OnResizeEnd(e);
-        }
-
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
             SetFormRoundRectRgn(this, 2);
+            if (MaximizeBox && windowButtonList != null && windowButtonList.Count > 0)
+            {
+                if (WindowState == FormWindowState.Normal)
+                {
+                    windowButtonList[WindowButtons.Maximize].Text = "1";
+                }
+                else if(WindowState == FormWindowState.Maximized)
+                {
+                    windowButtonList[WindowButtons.Maximize].Text = "2";
+                }
+            }
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            AddControlBox();
         }
 
         protected override void WndProc(ref Message m)
@@ -471,8 +429,6 @@ namespace ControlAstro.Forms
                 if (Width - borderWidth > e.Location.X && e.Location.X > borderWidth && e.Location.Y > borderWidth)
                 {
                     MoveControl();
-                    if (MaximizeBox && WindowState == FormWindowState.Normal)
-                        windowButtonList[WindowButtons.Maximize].Text = "1";
                 }
             }
         }
@@ -481,6 +437,34 @@ namespace ControlAstro.Forms
         {
             WinApi.ReleaseCapture();
             WinApi.SendMessage(Handle, (int)WinApi.Messages.WM_NCLBUTTONDOWN, (int)WinApi.HitTest.HTCAPTION, 0);
+        }
+
+        private void AddControlBox()
+        {
+            if (!isInitialized)
+            {
+                if (ControlBox)
+                {
+                    AddControlBox(WindowButtons.Close);
+
+                    if (MaximizeBox)
+                        AddControlBox(WindowButtons.Maximize);
+
+                    if (MinimizeBox)
+                        AddControlBox(WindowButtons.Minimize);
+
+                    UpdateWindowButtonPosition();
+                }
+
+                if (StartPosition == FormStartPosition.CenterScreen)
+                {
+                    Point initialLocation = new Point();
+                    initialLocation.X = (Screen.PrimaryScreen.WorkingArea.Width - (ClientRectangle.Width + 5)) / 2;
+                    initialLocation.Y = (Screen.PrimaryScreen.WorkingArea.Height - (ClientRectangle.Height + 5)) / 2;
+                    Location = initialLocation;
+                }
+                isInitialized = true;
+            }
         }
 
         private void AddControlBox(WindowButtons button)
@@ -563,42 +547,18 @@ namespace ControlAstro.Forms
         private void UpdateWindowButtonPosition()
         {
             if (!ControlBox) return;
-
-            Dictionary<int, WindowButtons> priorityOrder = new Dictionary<int, WindowButtons>(3) { { 0, WindowButtons.Close }, { 1, WindowButtons.Maximize }, { 2, WindowButtons.Minimize } };
-
-            Point firstButtonLocation = new Point(ClientRectangle.Width - 31, borderWidth);
-            int lastDrawedButtonPosition = firstButtonLocation.X - 30;
-
-            Control firstButton = null;
-
-            if (windowButtonList.Count == 1)
+            Point btnLocation = new Point(ClientRectangle.Width - 31, 1);
+            windowButtonList[WindowButtons.Close].Location = btnLocation;
+            if(MaximizeBox)
             {
-                foreach (KeyValuePair<WindowButtons, Label> button in windowButtonList)
-                {
-                    button.Value.Location = firstButtonLocation;
-                }
+                btnLocation.Offset(-30, 0);
+                windowButtonList[WindowButtons.Maximize].Location = btnLocation;
             }
-            else
+            if(MinimizeBox)
             {
-                foreach (KeyValuePair<int, WindowButtons> button in priorityOrder)
-                {
-                    bool buttonExists = windowButtonList.ContainsKey(button.Value);
-
-                    if (firstButton == null && buttonExists)
-                    {
-                        firstButton = windowButtonList[button.Value];
-                        firstButton.Location = firstButtonLocation;
-                        continue;
-                    }
-
-                    if (firstButton == null || !buttonExists) continue;
-
-                    windowButtonList[button.Value].Location = new Point(lastDrawedButtonPosition, borderWidth);
-                    lastDrawedButtonPosition = lastDrawedButtonPosition - 30;
-                }
+                btnLocation.Offset(-30, 0);
+                windowButtonList[WindowButtons.Minimize].Location = btnLocation;
             }
-
-            Refresh();
         }
 
         private void RemoveCloseButton()
@@ -613,7 +573,6 @@ namespace ControlAstro.Forms
             WinApi.RemoveMenu(hMenu, (uint)(n - 2), WinApi.MfByposition | WinApi.MfRemove);
             WinApi.DrawMenuBar(Handle);
         }
-
 
     }
 
