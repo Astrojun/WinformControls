@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace ControlAstro.Controls
 {
     [ToolboxBitmap(typeof(DataGridViewButtonColumn), "DataGridViewButtonColumn.bmp")]
-    public class DataGridViewStateColumn : DataGridViewColumn
+    internal class DataGridViewStateColumn : DataGridViewColumn
     {
 
         public DataGridViewStateColumn()
@@ -234,9 +234,9 @@ namespace ControlAstro.Controls
                         break;
                     case LightState.Off:
                         graphics.FillPolygon(Brushes.Green, new Point[] {
-                            new Point(rectangle.X + 5, rectangle.Y + rectangle.Height / 2),
-                            new Point(rectangle.X + (rectangle.Height + 4) / 2, rectangle.Y + 3),
-                            new Point(rectangle.X + (rectangle.Height + 4) / 2, rectangle.Y + rectangle.Height - 3) });
+                            new Point(rectangle.X + 5, rectangle.Y + 3),
+                            new Point(rectangle.X + 5, rectangle.Y + rectangle.Height - 3),
+                            new Point(rectangle.X + (rectangle.Height + 4) / 2, rectangle.Y + rectangle.Height / 2) });
                         break;
                     case LightState.On:
                         graphics.FillRectangle(Brushes.Silver, stateRect);
