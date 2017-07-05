@@ -25,12 +25,6 @@ namespace ControlAstro.Controls
             }
         }
 
-        [DefaultValue(true)]
-        public bool NormalStyle
-        {
-            get; set;
-        }
-
 
         public ButtonTile()
         {
@@ -58,23 +52,14 @@ namespace ControlAstro.Controls
             }
             if (isHovered)
             {
-                if (NormalStyle)
-                {
-                    ControlPaint.DrawBorder(e.Graphics, ClientRectangle,
-                        Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                        Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                        Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                        Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid);
-                }
-                else
-                {
-                    ControlPaint.DrawBorder(e.Graphics, ClientRectangle,
-                Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
-                Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid);
-                }
+                ControlPaint.DrawBorder(e.Graphics, ClientRectangle,
+                    Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
+                    Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
+                    Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid,
+                    Color.FromArgb(255, Color.Silver), 2, ButtonBorderStyle.Solid);
             }
+
+
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
