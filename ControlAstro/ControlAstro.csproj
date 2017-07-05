@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -48,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\Sock_Wrapper.cs" />
     <Compile Include="Controls\ButtonTile.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -58,10 +60,14 @@
     <Compile Include="Controls\DataGridViewSummary.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\DataGridViewTimeColumn.cs" />
     <Compile Include="Controls\HScrollBarEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\IndicatorLight.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LabelButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\TabControlEx.cs">
@@ -79,14 +85,27 @@
     <Compile Include="Controls\ToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ToolTipEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\VScrollBarEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Design\BorderEditor.cs" />
     <Compile Include="Design\CircleButtonDesigner.cs" />
+    <Compile Include="Design\FormControlBoxDesigner.cs" />
     <Compile Include="Drawing\AlignmentTools.cs" />
     <Compile Include="Drawing\MetroFonts.cs" />
     <Compile Include="Enums\ControlEnums.cs" />
+    <Compile Include="Forms\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\UserForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,10 +119,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Structs\FormColor.cs" />
     <Compile Include="Utils\BingdingCollection.cs" />
     <Compile Include="Utils\EncryptionTools.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\BaseForm.resx">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MsgBox.resx">
+      <DependentUpon>MsgBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UserForm.resx">
       <DependentUpon>UserForm.cs</DependentUpon>
     </EmbeddedResource>
