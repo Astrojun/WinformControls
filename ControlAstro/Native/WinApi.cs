@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 
 namespace ControlAstro.Native
 {
-    internal class WinApi
+    public class WinApi
     {
         #region Structs
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct TT_HITTESTINFO
+        public struct TT_HITTESTINFO
         {
             internal IntPtr hwnd;
             internal POINT pt;
@@ -17,7 +17,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct TOOLINFO
+        public struct TOOLINFO
         {
             internal TOOLINFO(int flags)
             {
@@ -51,7 +51,7 @@ namespace ControlAstro.Native
         //}
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct RECT
+        public struct RECT
         {
             public int Left;
             public int Top;
@@ -102,7 +102,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct POINT
+        public struct POINT
         {
             public int X;
             public int Y;
@@ -115,7 +115,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct PAINTSTRUCT
+        public struct PAINTSTRUCT
         {
             public IntPtr hdc;
             public int fErase;
@@ -133,7 +133,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct NMTTDISPINFO
+        public struct NMTTDISPINFO
         {
             internal NMTTDISPINFO(int flags)
             {
@@ -154,14 +154,14 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct NMTTCUSTOMDRAW
+        public struct NMTTCUSTOMDRAW
         {
             internal NMCUSTOMDRAW nmcd;
             internal uint uDrawFlags;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct NMHDR
+        public struct NMHDR
         {
             internal NMHDR(int flag)
             {
@@ -176,7 +176,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct NMCUSTOMDRAW
+        public struct NMCUSTOMDRAW
         {
             internal NMHDR hdr;
             internal uint dwDrawStage;
@@ -188,7 +188,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct INITCOMMONCONTROLSEX
+        public struct INITCOMMONCONTROLSEX
         {
             internal INITCOMMONCONTROLSEX(int flags)
             {
@@ -201,7 +201,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct BLENDFUNCTION
+        public struct BLENDFUNCTION
         {
             internal byte BlendOp;
             internal byte BlendFlags;
@@ -218,7 +218,7 @@ namespace ControlAstro.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct TRACKMOUSEEVENT
+        public struct TRACKMOUSEEVENT
         {
             internal uint cbSize;
             internal TRACKMOUSEEVENT_FLAGS dwFlags;
@@ -268,6 +268,45 @@ namespace ControlAstro.Native
         #endregion
 
         #region Enums
+
+        public enum nCmdShowWindow : int
+        {
+            //隐藏窗口并激活其他窗口。nCmdShow = 0。
+            SW_HIDE = 0,
+            //激活并显示一个窗口。如果窗口被最小化或最大化，系统将其恢复到原来的尺寸和大小。应用程序在第一次显示窗口的时候应该指定此标志。nCmdShow = 1。
+            SW_SHOWNORMAL = 1,
+            //激活窗口并将其最小化。nCmdShow = 2。
+            SW_SHOWMINIMIZED = 2,
+            //激活窗口并将其最大化。nCmdShow = 3。
+            SW_SHOWMAXIMIZED = 3,
+            //最大化指定的窗口。nCmdShow = 3。
+            SW_MAXIMIZE = 3,
+            //以窗口最近一次的大小和状态显示窗口。激活窗口仍然维持激活状态。nCmdShow = 4。
+            SW_SHOWNOACTIVATE = 4,
+            //在窗口原来的位置以原来的尺寸激活和显示窗口。nCmdShow = 5。
+            SW_SHOW = 5,
+            //最小化指定的窗口并且激活在Z序中的下一个顶层窗口。nCmdShow = 6。
+            SW_MINIMIZE = 6,
+            //窗口最小化，激活窗口仍然维持激活状态。nCmdShow = 7。
+            SW_SHOWMINNOACTIVE = 7,
+            //以窗口原来的状态显示窗口。激活窗口仍然维持激活状态。nCmdShow = 8。
+            SW_SHOWNA = 8,
+            //激活并显示窗口。如果窗口最小化或最大化，则系统将窗口恢复到原来的尺寸和位置。在恢复最小化窗口时，应用程序应该指定这个标志。nCmdShow = 9。
+            SW_RESTORE = 9,
+            //依据在STARTUPINFO结构中指定的SW_FLAG标志设定显示状态，STARTUPINFO 结构是由启动应用程序的程序传递给CreateProcess函数的。nCmdShow = 10。
+            SW_SHOWDEFAULT = 10,
+            //在WindowNT5.0中最小化窗口，即使拥有窗口的线程被挂起也会最小化。在从其他线程最小化窗口时才使用这个参数。nCmdShow = 11。
+            SW_FORCEMINIMIZE = 11,
+        }
+
+        public enum SendMessageTimeoutFlags : uint
+        {
+            SMTO_NORMAL = 0x0,
+            SMTO_BLOCK = 0x1,
+            WM_NULL = 0,
+            SMTO_ABORTIFHUNG = 0x2,
+            SMTO_NOTIMEOUTIFNOTHUNG = 0x8
+        }
 
         public enum TRACKMOUSEEVENT_FLAGS : uint
         {
@@ -583,6 +622,9 @@ namespace ControlAstro.Native
 
         #region USER32.DLL
 
+        [DllImport("user32.dll", EntryPoint = "ShowWindow", CharSet = CharSet.Auto)]
+        public static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+
         [DllImport("user32.dll")]
         public static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
@@ -753,6 +795,19 @@ namespace ControlAstro.Native
 
         [DllImport("user32.dll")]
         public static extern int SetWindowRgn(IntPtr hwnd, int hRgn, bool bRedraw);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool IsHungAppWindow(IntPtr hwnd);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessageTimeout(
+            IntPtr windowHandle,
+            uint Msg,
+            IntPtr wParam,
+            IntPtr lParam,
+            SendMessageTimeoutFlags flags,
+            uint timeout,
+            out uint result);
 
         #endregion
 
