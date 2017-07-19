@@ -9,3 +9,7 @@ ControlAstro/Forms/BaseForm.Designer.cs
 ControlAstro/Forms/BaseForm.resx
 ControlAstro/Controls/DataGridViewStateColumn.cs
 ControlAstro/Design/FormControlBoxDesigner.cs
+
+ControlAstro/bin
+ControlAstro/obj
+.vs
