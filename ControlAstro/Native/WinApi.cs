@@ -946,6 +946,9 @@ namespace ControlAstro.Native
         [DllImport("kernel32.dll")]
         public static extern IntPtr SetEvent(IntPtr lpEvent);
 
+        [DllImport("kernel32.dll")]
+        public static extern bool CloseHandle(IntPtr intPtr);
+
         #endregion
 
         #endregion
