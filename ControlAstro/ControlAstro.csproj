@@ -56,6 +56,10 @@
     <Compile Include="Controls\CircleButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\DataGridViewDisableButtonColumn.cs" />
+    <Compile Include="Controls\DataGridViewDragSort.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\DataGridViewStateColumn.cs" />
     <Compile Include="Controls\DataGridViewSummary.cs">
       <SubType>Component</SubType>
@@ -70,6 +74,9 @@
     <Compile Include="Controls\LabelButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ListViewDrag.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TabControlEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -81,6 +88,12 @@
     </Compile>
     <Compile Include="Controls\TextBoxWatermark.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TipPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TipPanel.designer.cs">
+      <DependentUpon>TipPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ToolStripEx.cs">
       <SubType>Component</SubType>
@@ -124,6 +137,9 @@
     <Compile Include="Utils\EncryptionTools.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\TipPanel.resx">
+      <DependentUpon>TipPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -143,6 +159,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\btSearch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImgMove1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImgCopy1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
