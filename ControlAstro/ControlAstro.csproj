@@ -135,6 +135,9 @@
     <Compile Include="Structs\FormColor.cs" />
     <Compile Include="Utils\BingdingCollection.cs" />
     <Compile Include="Utils\EncryptionTools.cs" />
+    <Compile Include="Utils\IniFileOperator.cs" />
+    <Compile Include="Utils\PropertyFileOperator.cs" />
+    <Compile Include="Utils\XmlHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\TipPanel.resx">
