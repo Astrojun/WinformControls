@@ -60,6 +60,7 @@ namespace ControlAstro.Controls
             }
 
 
+            TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, ForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
