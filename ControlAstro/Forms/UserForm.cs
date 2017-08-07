@@ -23,6 +23,10 @@ namespace ControlAstro.Forms
         private float fw = 1;
         private float fh = 1;
 
+        private LabelButton btnMin;
+        private LabelButton btnMax;
+        private LabelButton btnClose;
+
         [Description("背景色旋转角度"), Browsable(false)]
         public float BackAngle { get; set; }
 
@@ -168,9 +172,22 @@ namespace ControlAstro.Forms
             }
         }
 
-        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        //public Structs.FormColor FormColor { get; set; }
-
+        private bool enabled = true;
+        public new bool Enabled
+        {
+            get { return enabled; }
+            set
+            {
+                enabled = value;
+                foreach(Control c in Controls)
+                {
+                    if(c.Name!=btnClose.Name&& c.Name != btnMax.Name&& c.Name != btnMin.Name)
+                    {
+                        c.Enabled = value;
+                    }
+                }
+            }
+        }
 
         [Description("非客户区大小"), Browsable(false), EditorBrowsable(EditorBrowsableState.Advanced)]
         public new Padding Padding { get { return base.Padding; } set { base.Padding = value; } }
@@ -249,7 +266,10 @@ namespace ControlAstro.Forms
                 if (BackBrush != null && BackBrush != SystemBrushes.Control)
                 {
                     RectangleF rect = new RectangleF(ClientRectangle.Width * fx, ClientRectangle.Height * fy, ClientRectangle.Width * fw, ClientRectangle.Height * fh);
-                    e.Graphics.FillRectangle(new LinearGradientBrush(rect, BackBrush.LinearColors[0], BackBrush.LinearColors[1], BackAngle), ClientRectangle);
+                    if (rect.Width > 0 && rect.Height > 0)
+                    {
+                        e.Graphics.FillRectangle(new LinearGradientBrush(rect, BackBrush.LinearColors[0], BackBrush.LinearColors[1], BackAngle), ClientRectangle);
+                    }
                 }
             }
 
@@ -483,11 +503,13 @@ namespace ControlAstro.Forms
                 newButton.Name = "btnClose";
                 newButton.FlatAppearance.MouseOverBackColor = Color.Red;
                 newButton.FlatAppearance.MouseDownBackColor = Color.OrangeRed;
+                btnClose = newButton;
             }
             else if (button == WindowButtons.Minimize)
             {
                 newButton.Text = "0";
                 newButton.Name = "btnMin";
+                btnMin = newButton;
             }
             else if (button == WindowButtons.Maximize)
             {
@@ -496,6 +518,7 @@ namespace ControlAstro.Forms
                     newButton.Text = "1";
                 else
                     newButton.Text = "2";
+                btnMax = newButton;
             }
 
             newButton.Tag = button;
