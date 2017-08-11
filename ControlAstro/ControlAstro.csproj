@@ -77,6 +77,12 @@
     <Compile Include="Controls\ListViewDrag.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\SeparatorLine.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SeparatorLine.Designer.cs">
+      <DependentUpon>SeparatorLine.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TabControlEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -134,7 +140,10 @@
     </Compile>
     <Compile Include="Structs\FormColor.cs" />
     <Compile Include="Utils\BingdingCollection.cs" />
+    <Compile Include="Utils\CalmCRC.cs" />
     <Compile Include="Utils\EncryptionTools.cs" />
+    <Compile Include="Utils\EnumerableHelper.cs" />
+    <Compile Include="Utils\EnumHelper.cs" />
     <Compile Include="Utils\IniFileOperator.cs" />
     <Compile Include="Utils\PropertyFileOperator.cs" />
     <Compile Include="Utils\XmlHelper.cs" />
@@ -170,6 +179,10 @@
     <None Include="Resources\ImgCopy1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
