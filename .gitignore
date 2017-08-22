@@ -13,3 +13,4 @@ ControlAstro/Design/FormControlBoxDesigner.cs
 ControlAstro/bin
 ControlAstro/obj
 .vs
+ControlAstro/Utils/XmlHelper.cs

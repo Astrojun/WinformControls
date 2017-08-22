@@ -77,6 +77,12 @@
     <Compile Include="Controls\ListViewDrag.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PrintPreviewDialogEx.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\PrintPreviewDialogEx.Designer.cs">
+      <DependentUpon>PrintPreviewDialogEx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SeparatorLine.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -177,6 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ImgCopy1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SettingTransparent.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
