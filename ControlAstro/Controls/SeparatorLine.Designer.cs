@@ -1,4 +1,4 @@
-﻿namespace MixManagementPlatform.Controls
+﻿namespace ControlAstro.Controls
 {
     partial class SeparatorLine
     {

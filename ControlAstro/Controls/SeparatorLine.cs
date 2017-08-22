@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MixManagementPlatform.Controls
+namespace ControlAstro.Controls
 {
     public partial class SeparatorLine : Control
     {
